@@ -1,1 +1,26 @@
-[{"id":1,"name":"Die Hard","releaseYear":1998,"duration":90},{"id":2,"name":"Expandables","releaseYear":2008,"duration":80},{"id":3,"name":"Interstellar","releaseYear":2014,"duration":120},{"id":4,"name":"Fast and furious","releaseYear":2020,"duration":90},{"id":5,"name":"Witcher","releaseYear":2022,"duration":190}]
+[
+    {
+        "id": 1,
+        "name": "Die Hard",
+        "releaseYear": 1998,
+        "duration": 90
+    },
+    {
+        "id": 2,
+        "name": "Expandables",
+        "releaseYear": 2008,
+        "duration": 80
+    },
+    {
+        "id": 3,
+        "name": "Interstellar",
+        "releaseYear": 2014,
+        "duration": 120
+    },
+    {
+        "id": 4,
+        "name": "Home alone",
+        "releaseYear": 2020,
+        "duration": 90
+    }
+]
