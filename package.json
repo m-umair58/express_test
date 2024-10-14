@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/m-umair58/express_test#readme",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "morgan": "^1.10.0"
   }
 }
