@@ -1,18 +1,25 @@
 
 let fs = require('fs');
 let movies = JSON.parse(fs.readFileSync('./data/movies.json'));
+
+exports.checkId = (req,res,next,value)=>{
+    console.log('Movie id id '+value);
+
+    let movie = movies.find(el=>el.id===value*1)
+
+    if(!movie){
+        return res.status(404).json({   // returning because we want to exit from the function
+            status:"fail",
+            message:"Movie with id "+value+" not found!"
+        })
+    }
+    next()
+}
 // api handler functions
 exports.getMovieById = (req,res)=>{
     const id = req.params.id*1 // * with 1 to convert string data into integer value
 
     let movie = movies.find(el=>el.id===id)
-
-    if(!movie){
-        return res.status(404).json({   // returning because we want to exit from the function
-            status:"fail",
-            message:"Movie with id "+id+" not found!"
-        })
-    }
 
     res.status(200).json({
         status:"success",
@@ -36,12 +43,6 @@ exports.getAllMovies = (req,res)=>{
 exports.updateMovie = (req,res)=>{
     const id = req.params.id*1 // * with 1 to convert string data into integer value
     let movieToUpdate = movies.find(el=>el.id===id)
-    if(!movieToUpdate){
-        return res.status(404).json({   // returning because we want to exit from the function
-            status:"fail",
-            message:"Movie with id "+id+" not found!"
-        })
-    }
 
     let index = movies.indexOf(movieToUpdate);
 
@@ -78,14 +79,6 @@ exports.createMovie = (req,res)=>{
 
 exports.deleteMovieById = (req,res)=>{
     const id = req.params.id*1 // * with 1 to convert string data into integer value
-    let movieToDelete = movies.find(el=>el.id===id)
-
-    if(!movieToDelete){
-        return res.status(404).json({   // returning because we want to exit from the function
-            status:"fail",
-            message:"Movie with id "+id+" not found!"
-        })
-    }
 
     let index = movies.indexOf(movieToDelete);
 
@@ -100,3 +93,13 @@ exports.deleteMovieById = (req,res)=>{
         })
     })
 };
+
+exports.validateBody = (req,res,next)=>{
+    if(!req.body.name || !req.body.releaseYear){
+        return res.status(400).json({
+            status:"fail",
+            message:"Not a valid movie data"
+        })
+    }
+    next()
+}
