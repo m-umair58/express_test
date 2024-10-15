@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/m-umair58/express_test#readme",
   "dependencies": {
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "mongoose": "^8.7.1",
     "morgan": "^1.10.0"
   }
 }

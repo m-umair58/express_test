@@ -11,7 +11,11 @@ const logger = function(req,res,next){
 }
 
 app.use(express.json())// this is a middleware. we use this to get body in request 
-app.use(morgan('dev'))
+if(process.env.NODE_ENV ==="development")
+{
+    app.use(morgan('dev'))
+}
+app.use(express.static('./public'))
 app.use(logger)
 app.use((req,res,next)=>{
     req.requestedAt = new Date().toISOString();
