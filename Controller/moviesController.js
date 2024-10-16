@@ -29,46 +29,6 @@ exports.getAllMovies = async (req,res)=>{
     try{
         const features = new ApiFeatures(Movie.find(),req.query).filter().sort().fields().paginate();
         let movies = await features.query;
-        //console.log(req.query);
-        // const excludeFields = ['page','limit','fields']
-
-        // let queryObj = {...req.query};
-
-        // excludeFields.forEach((el)=>{
-        //     delete queryObj[el]
-        // })
-        // // the above code is to exculde the given fields if provided in query parameters
-        // console.log(queryObj)
-        //////////////////////////////////////////////////////////////////////
-        // let queryStr = JSON.stringify(req.query);
-        // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g,(match)=>`$${match}`);
-        // let queryObj = JSON.parse(queryStr);
-        // // this above code is if we want to implement conditions like greater than or gte etc
-        // delete queryObj.sort // if we dont add this line we arenot getting results for sorted query
-        // let query = Movie.find(queryObj);
-
-        // sorting 
-        // if(req.query.sort){
-        //     const sortBy = req.query.sort.split(',').join(' ')
-        //     query = query.sort(sortBy)
-        //     console.log(sortBy)
-        // }else{
-        //     query = query.sort('createdAt')
-        // }
-
-        // fields
-        // if(req.query.fields){
-        //     const fields = req.query.fields.split(',').join(' ')
-        //     query = query.select(fields)
-        // }
-        // else{
-        //     query = query.select('-__v') // this is to exclude __v
-        // }
-
-        // pagination
-        
-
-        // const movies = await query;
 
         res.status(200).json({
             status:"Successfull",

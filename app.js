@@ -22,6 +22,26 @@ app.use((req,res,next)=>{
     next();
 })
 
-app.use('/api/v1/movies',moviesRouter)
+app.use('/api/v1/movies',moviesRouter);
+app.all('*',(req,res,next)=>{
+    // res.status(404).json({
+    //     status:"Failed...!",
+    //     message:`Can't find the ${req.originalUrl} on server`
+    // });
+    const err = new Error(`Can't find the ${req.originalUrl} on server`);
+    err.status = 'fail',
+    err.statusCode = 404
+    next(err);
+})
+
+// global error handling middleware
+app.use((error,req,res,next)=>{
+    error.statusCode = error.statusCode || 500;
+    error.status = error.status || 'Error';
+    res.status(error.statusCode).json({
+        status:error.statusCode,
+        message:error.message
+    });
+})
 
 module.exports = app
