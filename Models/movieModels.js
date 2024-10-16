@@ -34,7 +34,8 @@ const movieSchema = new mongoose.Schema({
     },
     createdAt:{
         type:Date,
-        default:Date.now()
+        default:Date.now(),
+        select:false // this is if we dont want to show this data
     },
     genre:{
         type:[String],
@@ -61,16 +62,3 @@ const movieSchema = new mongoose.Schema({
 const Movie = mongoose.model('Movie',movieSchema);
 
 module.exports = Movie
-// const testMovie = new Movie({
-//     name:"Die Hard",
-//     description:"Awesome movie",
-//     duration:130,
-//     rating:5.0
-// })
-
-// testMovie.save().then(doc =>{
-//     console.log(doc);
-// })
-// .catch(err=>{
-//     console.log(err);
-// });

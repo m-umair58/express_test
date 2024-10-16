@@ -4,6 +4,7 @@ const moviesController = require('./../Controller/moviesController')
 
 
 // this is another way to define routes
+router.route('/get-highest').get(moviesController.getHighestRated,moviesController.getAllMovies)
 router.route('/')
     .get(moviesController.getAllMovies)
     .post(moviesController.createMovie)
