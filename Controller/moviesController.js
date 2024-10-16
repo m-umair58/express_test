@@ -2,16 +2,74 @@ const Movie = require('./../Models/movieModels')
 
 
 // api handler functions
-exports.getMovieById = (req,res)=>{
-
+exports.getMovieById = async (req,res)=>{
+    try{
+        // const movie = await Movie.find({_id:req.params.id});
+        const movie = await Movie.findById(req.params.id);
+        res.status(201).json({
+            status:"Successfull",
+            data:{
+                movie
+            }
+        })
+    }catch(err){
+        res.status(400).json({
+            status:"Failed...!",
+            message:err.message
+        })
+    }
 }
 
-exports.getAllMovies = (req,res)=>{
-    
+exports.getAllMovies = async (req,res)=>{
+    try{
+        //console.log(req.query);
+        const excludeFields = ['sort','page','limit','fields']
+
+        let queryObj = {...req.query};
+
+        excludeFields.forEach((el)=>{
+            delete queryObj[el]
+        })
+        // the above code is to exculde the given fields if provided in query parameters
+        // console.log(queryObj)
+
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g,(match)=>`$${match}`);
+        queryObj = JSON.parse(queryStr);
+        // this above code is if we want to implement conditions like greater than or gte etc
+        const movies = await Movie.find(queryObj);
+
+        res.status(200).json({
+            status:"Successfull",
+            length:movies.length,
+            data:{
+                movies
+            }
+        })
+    }catch(err){
+        res.status(400).json({
+            status:"Failed...!",
+            message:err.message
+        })
+    }
 }
 
-exports.updateMovie = (req,res)=>{
-    
+exports.updateMovie = async(req,res)=>{
+    try{
+        const updatedMovies = await Movie.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true});
+
+        res.status(201).json({
+            status:"Successfull",
+            data:{
+                movies:updatedMovies
+            }
+        })
+    }catch(err){
+        res.status(400).json({
+            status:"Failed...!",
+            message:err.message
+        })
+    }
 }
 
 exports.createMovie = async (req,res)=>{
@@ -32,6 +90,18 @@ exports.createMovie = async (req,res)=>{
     }
 }
 
-exports.deleteMovieById = (req,res)=>{
-    
+exports.deleteMovieById = async (req,res)=>{
+    try{
+        await Movie.findByIdAndDelete(req.params.id);
+
+        res.status(204).json({
+            status:"Successfull",
+            data:null
+        })
+    }catch(err){
+        res.status(404).json({
+            status:"Failed...!",
+            message:err.message
+        })
+    }
 };
