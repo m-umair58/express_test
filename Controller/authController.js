@@ -13,8 +13,21 @@ const signToken = id =>{
     })
 }
 
-    const createSendResponse = (user,statusCode,res)=>{
+const createSendResponse = (user,statusCode,res)=>{
         const token = signToken(user._id);
+
+        const options = {
+            maxAge:process.env.LOGIN_EXPIRES,
+            httpOnly:true
+        }
+        
+        if(process.env.NODE_ENV ==='production'){
+            options.secure = true;
+        }
+
+        res.cookie('jwt',token,options);
+
+        user.password = undefined // this is not going to change password in db as undefined but just not to show in response
 
         res.status(200).json({
             status:"success",
