@@ -5,6 +5,7 @@ let morgan = require('morgan')
 
 const moviesRouter = require('./Routes/moviesRoutes.js');
 const authRouter = require('./Routes/authRouter.js')
+const userRouter = require('./Routes/userRouter.js')
 
 
 let app = express();
@@ -19,7 +20,8 @@ app.use(express.static('./public'))
 
 
 app.use('/api/v1/movies',moviesRouter);
-app.use('/api/v1/users',authRouter);
+app.use('/api/v1/auth',authRouter);
+app.use('/api/v1/user',userRouter);
 
 app.all('*',(req,res,next)=>{
     const err = new CustomError(`Can't find the ${req.originalUrl} on server!`,404)
