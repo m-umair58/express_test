@@ -5,7 +5,7 @@ const CustomError = require('./../Utils/CustomErrors')
 const util =require('util');
 const sendEmail = require('./../Utils/email');
 const { log } = require('console');
-const crypto = require('crypto')
+const crypto = require('crypto');
 
 const signToken = id =>{
     return jwt.sign({id},process.env.SECRERT_STR,{
