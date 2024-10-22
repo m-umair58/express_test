@@ -9,11 +9,12 @@ console.log(process.env);
 const port = process.env.PORT || 8000;
 
 mongoose.connect(process.env.CONN_STR,{
-    useNewUrlParser:true
+    
 }).then((conn)=>{
     //console.log(conn)
     console.log("Db connection established...!")
 }).catch((error)=>{
+    console.log(error)
     console.log("Error...!")
 })
 
