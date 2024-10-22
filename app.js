@@ -19,6 +19,26 @@ const userRouter = require('./Routes/userRouter.js');
 
 let app = express();
 
+const mongoose = require('mongoose')
+
+const dotenv = require('dotenv')
+dotenv.config({path:'./config.env'})
+// console.log(process.env);
+const port = process.env.PORT || 8000;
+console.log(process.env.CONN_STR)
+mongoose
+  .connect(process.env.CONN_STR)
+  .then((result) => {
+    app.listen(port);
+    console.log("Listening to port 8081 and database is connected!");
+  })
+  .catch((err) => console.log(err));
+
+
+
+
+
+
 app.use(helmet());
 const limiter = rate_limit({
     max:1000,
