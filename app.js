@@ -3,10 +3,6 @@ const helmet = require('helmet');
 const sanitise = require('express-mongo-sanitize');
 const xss = require('xss-clean')
 
-// sentry setup
-require("./instrument.js");
-const Sentry = require("@sentry/node");
-
 const express = require('express');
 const CustomError = require('./Utils/CustomErrors.js')
 const globalErrorHandler = require('./Controller/errorController.js')
@@ -44,11 +40,6 @@ app.use(express.static('./public'))
 app.use('/api/v1/movies',moviesRouter);
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/user',userRouter);
-
-
-Sentry.setupExpressErrorHandler(app);
-
-
 
 app.all('*',(req,res,next)=>{
     const err = new CustomError(`Can't find the ${req.originalUrl} on server!`,404)
