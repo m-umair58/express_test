@@ -1,3 +1,7 @@
+require("./instrument.js");
+const Sentry = require("@sentry/node");
+
+
 const rate_limit= require('express-rate-limit');
 const helmet = require('helmet');
 const sanitise = require('express-mongo-sanitize');
@@ -41,11 +45,11 @@ app.use('/api/v1/movies',moviesRouter);
 app.use('/api/v1/auth',authRouter);
 app.use('/api/v1/user',userRouter);
 
-app.all('*',(req,res,next)=>{
-    const err = new CustomError(`Can't find the ${req.originalUrl} on server!`,404)
-    next(err);
-})
-
+// app.all('*',(req,res,next)=>{
+//     const err = new CustomError(`Can't find the ${req.originalUrl} on server!`,404)
+//     next(err);
+// })
+Sentry.setupExpressErrorHandler(app);
 // global error handling middleware
 app.use(globalErrorHandler)
 
