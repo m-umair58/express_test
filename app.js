@@ -33,7 +33,7 @@ mongoose
   .connect(process.env.CONN_STR)
   .then((result) => {
     app.listen(port);
-    console.log("Listening to port 8081 and database is connected!");
+    console.log("Listening to port 2525 and database is connected!");
   })
   .catch((err) => console.log(err));
 
@@ -45,15 +45,10 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // ejs materail
-const movies = [
-  { title: 'Inception', description: 'A mind-bending thriller.', rating: 9, imageUrl: 'path-to-image1' },
-  { title: 'Interstellar', description: 'A journey to save mankind.', rating: 8.5, imageUrl: 'path-to-image2' },
-  { title: 'The Dark Knight', description: 'A hero must confront a new nemesis.', rating: 9.2, imageUrl: 'path-to-image3' }
-];
 
 app.get('/movies', (req, res) => {
 
-  res.render('index', { movies });
+  res.render('index');
 });
 
 // Security

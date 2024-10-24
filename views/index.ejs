@@ -7,98 +7,187 @@
     <title>Movies</title>
     <!-- <link rel="stylesheet" href="/styles/home.css"> -->
     <style>
-      /* styles/home.css */
       body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
         margin: 0;
         padding: 0;
       }
-
-      header {
-        background-color: #333;
+  
+      #search-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+  
+      #search-input {
+        padding: 8px;
+        font-size: 16px;
+      }
+  
+      #search-button {
+        padding: 8px 16px;
+        background-color: #007bff;
         color: white;
-        padding: 10px;
-        text-align: center;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-left: 8px;
       }
-
+  
+      #search-button:hover {
+        background-color: #0056b3;
+      }
+  
       #movies-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 20px;
+        padding: 20px;
+        margin-top: 80px;
       }
-
+  
       .movie {
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin: 10px;
+        margin-bottom: 20px;
         padding: 15px;
-        text-align: center;
-        width: 250px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+        border-radius: 4px;
       }
-
-      .movie img {
-        width: 100%;
-        height: auto;
-        border-radius: 5px;
+  
+      #pagination-controls {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
       }
-
-      .movie h2 {
-        margin: 15px 0 10px 0;
-        font-size: 20px;
+  
+      #pagination-controls button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
       }
-
-      .movie p {
-        margin: 5px 0;
+  
+      #pagination-controls button:disabled {
+        background-color: #cccccc;
+      }
+  
+      #pagination-controls span {
+        font-size: 16px;
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>All Movies</h1>
-    </header>
-
-    <section id="movies-list"></section>
+    <div id="search-container">
+      <input type="text" id="search-input" placeholder="Search movies..." />
+      <button id="search-button">Search</button>
+    </div>
+  
+    <!-- Movie List -->
+    <div id="movies-list"></div>
+  
+    <!-- Pagination Controls at Bottom Center -->
+    <div id="pagination-controls">
+      <button id="prev-page">Previous</button>
+      <span id="current-page">Page 1</span>
+      <button id="next-page">Next</button>
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        fetch("/api/v1/movies")
-          .then((response) => response.json())
-          .then((result) => {
-            console.log("Full response:", result); // Log the full response
+        let currentPage = 1;
+        const moviesPerPage = 5;
+        let searchQuery = "";
 
-            // Access the movies data from the 'data.movies' field
-            const movies = result.data.movies;
-            console.log("Movies data:", movies); // Log the movies array
+        function fetchMovies(page = 1, search = "") {
+          // Construct the API URL with pagination and search keyword
+          let apiUrl = `/api/v1/movies?page=${page}&limit=${moviesPerPage}`;
+          if (search) {
+            apiUrl += `&keyword=${encodeURIComponent(search)}`;
+          }
 
-            const moviesList = document.getElementById("movies-list");
-            if (!moviesList) {
-              console.error("movies-list element not found");
-              return;
-            }
+          fetch(apiUrl)
+            .then((response) => response.json())
+            .then((result) => {
+              console.log("Full response:", result);
 
-            // Clear any previous content
-            moviesList.innerHTML = "";
+              const movies = result.data.movies || [];
+              const totalMovies = result.totalMovies; // Assuming API returns total number of movies
+              const totalPages = Math.ceil(totalMovies / moviesPerPage);
 
-            // Loop through the movies array and create elements
-            movies.forEach((movie) => {
-              const movieDiv = document.createElement("div");
-              movieDiv.classList.add("movie");
+              console.log("Movies data:", movies);
+              updateMoviesList(movies);
+              updatePaginationControls(totalPages);
+            })
+            .catch((error) => console.error("Error fetching movies:", error));
+        }
 
-              movieDiv.innerHTML = `
-                        <h2>${movie.name}</h2>
-                        <p>${movie.description}</p>
-                        <p>Rating: ${movie.rating}/10</p>
-                    `;
+        function updateMoviesList(movies) {
+          const moviesList = document.getElementById("movies-list");
+          if (!moviesList) {
+            console.error("movies-list element not found");
+            return;
+          }
 
-              console.log("Appending movie:", movieDiv); // Log each movie div
-              moviesList.appendChild(movieDiv);
-            });
-          })
-          .catch((error) => console.error("Error fetching movies:", error));
+          moviesList.innerHTML = ""; // Clear previous content
+
+          movies.forEach((movie) => {
+            const movieDiv = document.createElement("div");
+            movieDiv.classList.add("movie");
+
+            movieDiv.innerHTML = `
+              <h2>${movie.name}</h2>
+              <p>${movie.description}</p>
+              <p>Actors: ${movie.actors}</p>
+              <p>Directors: ${movie.directors}</p>
+              <p>Rating: ${movie.rating}/10(${movie.totalRating})</p>
+            `;
+
+            console.log("Appending movie:", movieDiv);
+            moviesList.appendChild(movieDiv);
+          });
+        }
+
+        function updatePaginationControls(totalPages) {
+          const prevButton = document.getElementById("prev-page");
+          const nextButton = document.getElementById("next-page");
+          const currentPageSpan = document.getElementById("current-page");
+
+          currentPageSpan.textContent = `Page ${currentPage}`;
+
+          prevButton.disabled = currentPage === 1;
+          nextButton.disabled = currentPage === totalPages;
+        }
+
+        // Search function: Trigger fetchMovies with search query
+        document
+          .getElementById("search-button")
+          .addEventListener("click", () => {
+            const searchInput = document.getElementById("search-input").value;
+            searchQuery = searchInput;
+            currentPage = 1; // Reset to the first page when a new search is made
+            fetchMovies(currentPage, searchQuery);
+          });
+
+        // Pagination event listeners
+        document.getElementById("prev-page").addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            fetchMovies(currentPage, searchQuery);
+          }
+        });
+
+        document.getElementById("next-page").addEventListener("click", () => {
+          currentPage++;
+          fetchMovies(currentPage, searchQuery);
+        });
+
+        // Initial fetch for the first page
+        fetchMovies(currentPage);
       });
     </script>
   </body>
