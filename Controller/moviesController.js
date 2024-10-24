@@ -27,8 +27,11 @@ exports.getMovieById = async (req,res)=>{
 
 exports.getAllMovies = async (req,res)=>{
     try{
-        const features = new ApiFeatures(Movie.find(),req.query).filter().sort().fields().paginate();
+        console.log(req.query);
+        const features = new ApiFeatures(Movie.find(),req.query).filter().sort().paginate();
         let movies = await features.query;
+        const moviesCount = await Movie.countDocuments();
+        console.log('Total movies:', moviesCount); // Log total movie count
 
         res.status(200).json({
             status:"Successfull",

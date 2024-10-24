@@ -6,7 +6,7 @@ const authController = require('./../Controller/authController')
 // this is another way to define routes
 router.route('/get-highest').get(moviesController.getHighestRated,moviesController.getAllMovies)
 router.route('/')
-    .get(authController.protect,moviesController.getAllMovies)
+    .get(moviesController.getAllMovies)
     .post(moviesController.createMovie)
 
 router.route('/:id')
