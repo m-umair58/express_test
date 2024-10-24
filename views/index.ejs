@@ -5,97 +5,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movies</title>
-    <!-- <link rel="stylesheet" href="/styles/home.css"> -->
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-  
-      #search-container {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-      }
-  
-      #search-input {
-        padding: 8px;
-        font-size: 16px;
-      }
-  
-      #search-button {
-        padding: 8px 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-left: 8px;
-      }
-  
-      #search-button:hover {
-        background-color: #0056b3;
-      }
-  
-      #movies-list {
-        padding: 20px;
-        margin-top: 80px;
-      }
-  
-      .movie {
-        margin-bottom: 20px;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-  
-      #pagination-controls {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-      }
-  
-      #pagination-controls button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-  
-      #pagination-controls button:disabled {
-        background-color: #cccccc;
-      }
-  
-      #pagination-controls span {
-        font-size: 16px;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    
   </head>
   <body>
-    <div id="search-container">
-      <input type="text" id="search-input" placeholder="Search movies..." />
-      <button id="search-button">Search</button>
-    </div>
+    <header>
+      <%- include('header') %>
+    </header>
+    <main>
+      <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search movies..." />
+        <button id="search-button">Search</button>
+      </div>
+      <div id="movies-list"></div>
+
+    </main>
+      
   
     <!-- Movie List -->
-    <div id="movies-list"></div>
-  
-    <!-- Pagination Controls at Bottom Center -->
-    <div id="pagination-controls">
-      <button id="prev-page">Previous</button>
-      <span id="current-page">Page 1</span>
-      <button id="next-page">Next</button>
-    </div>
+    <footer>
+      <%- include('footer') %>
+    </footer>
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -139,12 +69,32 @@
             const movieDiv = document.createElement("div");
             movieDiv.classList.add("movie");
 
+            // Add inline styles for a more appealing look
+            movieDiv.style.backgroundColor = "#ffffff";
+            movieDiv.style.padding = "20px";
+            movieDiv.style.marginBottom = "20px";
+            movieDiv.style.borderRadius = "10px";
+            movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            movieDiv.style.border = "1px solid #ddd";
+            movieDiv.style.transition = "transform 0.2s, box-shadow 0.2s";
+
+            // Add hover effect
+            movieDiv.addEventListener("mouseover", () => {
+              movieDiv.style.transform = "scale(1.02)";
+              movieDiv.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.2)";
+            });
+
+            movieDiv.addEventListener("mouseout", () => {
+              movieDiv.style.transform = "scale(1)";
+              movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            });
+
             movieDiv.innerHTML = `
-              <h2>${movie.name}</h2>
-              <p>${movie.description}</p>
-              <p>Actors: ${movie.actors}</p>
-              <p>Directors: ${movie.directors}</p>
-              <p>Rating: ${movie.rating}/10(${movie.totalRating})</p>
+              <h2 style="color: #333; margin-bottom: 10px;">${movie.name}</h2>
+              <p style="color: #666; margin-bottom: 8px;">${movie.description}</p>
+              <p style="color: #666; margin-bottom: 8px;">Actors: ${movie.actors}</p>
+              <p style="color: #666; margin-bottom: 8px;">Directors: ${movie.directors}</p>
+              <p style="color: #007bff; font-weight: bold;">Rating: ${movie.rating}/10 (${movie.totalRating})</p>
             `;
 
             console.log("Appending movie:", movieDiv);
@@ -171,6 +121,16 @@
             searchQuery = searchInput;
             currentPage = 1; // Reset to the first page when a new search is made
             fetchMovies(currentPage, searchQuery);
+          });
+
+        document
+          .getElementById("search-input")
+          .addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              searchQuery = event.target.value;
+              currentPage = 1; // Reset to the first page when a new search is made
+              fetchMovies(currentPage, searchQuery);
+            }
           });
 
         // Pagination event listeners

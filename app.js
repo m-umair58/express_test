@@ -21,6 +21,7 @@ const authRouter = require("./Routes/authRouter.js");
 const userRouter = require("./Routes/userRouter.js");
 
 let app = express();
+app.use(express.static('public'));
 
 const mongoose = require("mongoose");
 
@@ -49,6 +50,14 @@ app.set("view engine", "ejs");
 app.get('/movies', (req, res) => {
 
   res.render('index');
+});
+app.get('/signin', (req, res) => {
+
+  res.render('signin');
+});
+app.get('/home', (req, res) => {
+
+  res.render('home',{ title: 'Home Page' ,body:'My body'});
 });
 
 // Security
