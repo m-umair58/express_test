@@ -93,7 +93,11 @@ header p {
 .category-card a:hover {
   background-color: #2e2e5a;
 }
-
+.logo {
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+  border-radius: 50%; /* Makes the image round */
+}
 
 #pagination-controls {
   position: fixed;

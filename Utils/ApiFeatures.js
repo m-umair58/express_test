@@ -3,7 +3,19 @@ class Apifeatures{
         this.query=query;
         this.queryStr=queryStr;
     }
-    search() {
+    searchSongs() {
+        const keyword = this.queryStr.keyword
+            ? {
+                title: {
+                    $regex: this.queryStr.keyword,
+                    $options: "i",
+                },
+            }
+            : {};
+        this.query = this.query.find({ ...keyword });
+        return this;
+    }
+    searchMovies() {
         const keyword = this.queryStr.keyword
             ? {
                 name: {
@@ -63,11 +75,8 @@ class Apifeatures{
     }
 
     paginate(){
-        console.log(this.query.page)
-        console.log("hello")
-        console.log(this.query.limit)
-        const page = this.queryStr.page*1 ;
-        const limit = this.queryStr.limit*1 ;
+        const page = this.queryStr.page*1 || 1;
+        const limit = this.queryStr.limit*1 || 5;
 
 
         const skip = (page-1)*limit;

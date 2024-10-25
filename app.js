@@ -17,6 +17,7 @@ const globalErrorHandler = require("./Controller/errorController.js");
 let morgan = require("morgan");
 
 const moviesRouter = require("./Routes/moviesRoutes.js");
+const songsRouter = require("./Routes/songsRouter.js");
 const authRouter = require("./Routes/authRouter.js");
 const userRouter = require("./Routes/userRouter.js");
 
@@ -49,15 +50,19 @@ app.set("view engine", "ejs");
 
 app.get('/movies', (req, res) => {
 
-  res.render('index');
+  res.render('movies');
 });
 app.get('/signin', (req, res) => {
 
   res.render('signin');
 });
-app.get('/home', (req, res) => {
+app.get(['/', '/home'], (req, res) => {
 
-  res.render('home',{ title: 'Home Page' ,body:'My body'});
+  res.render('home',{ title: 'MoviesHub' ,body:'My body'});
+});
+app.get('/songs', (req, res) => {
+
+  res.render('songs');
 });
 
 // Security
@@ -83,6 +88,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.static("./public"));
 
 app.use("/api/v1/movies", moviesRouter);
+app.use("/api/v1/songs", songsRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 

@@ -3,10 +3,7 @@
   <head>
     <title><%= title %></title>
     <link rel="stylesheet" href="/styles/home-style.css">
-    <style>
-      /* General Reset */
-      
-    </style>
+    <link rel="icon" type="image/png" href="images/logo.png" sizes="32x32" />
   </head>   
   <body>
     <header>
@@ -45,8 +42,11 @@
     </main>
     <script>
       document.getElementById("movies-button").addEventListener("click", () => {
-          window.location.href = "/movies";
-        });
+        window.location.href = "/movies";
+      });
+      document.getElementById("songs-button").addEventListener("click", () => {
+        window.location.href = "/songs";
+      });
     </script>
   </body>
 </html>
