@@ -13,7 +13,7 @@ const signToken = (id) =>{
     })
 }
 
-const createSendResponse = (user,statusCode,res)=>{
+const createSendResponse = (user,statusCode,res,req)=>{
         const token = signToken(user._id);
 
         const options = {
@@ -28,7 +28,10 @@ const createSendResponse = (user,statusCode,res)=>{
         res.cookie('jwt',token,options);
 
         user.password = undefined // this is not going to change password in db as undefined but just not to show in response
-        
+        req.session.user = {
+            id: user._id,
+            email: user.email
+          };
         res.status(200).json({
             status:"success",
             token,
@@ -41,7 +44,7 @@ const createSendResponse = (user,statusCode,res)=>{
 exports.signup = asyncErrorHandler(async(req,res,next)=>{
     const newUser = await User.create(req.body);
 
-    createSendResponse(newUser,201,res);
+    createSendResponse(newUser,201,res,req);
 });
 
 exports.login = asyncErrorHandler(async(req,res,next)=>{
@@ -78,13 +81,9 @@ exports.login = asyncErrorHandler(async(req,res,next)=>{
             });
         }
         
-        req.session.user = {
-            id: user._id,
-            email: user.email
-          };
         
         console.log('Login successful');
-        return createSendResponse(user, 200, res);
+        return createSendResponse(user, 200, res,req);
         
     } catch (error) {
         console.error('Login error:', error);
