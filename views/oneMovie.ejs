@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <link rel="stylesheet" href="/styles/movies-style.css" />
+    <link rel="stylesheet" href="/styles/footer.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link rel="icon" type="image/png" href="/images/logo.png" sizes="32x32" />
+    <style>
+        .movie-details {
+            background-color: #ffffff;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+        .movie-details h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .movie-details p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .movie-details .rating {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        
+      <div id="movies-list"></div>
+        
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        let currentPage = 1;
+        const moviesPerPage = 5;
+        let searchQuery = "";
+
+        function fetchMovies(page = 1, search = "") {
+          // Construct the API URL with pagination and search keyword
+          let id = "<%= id %>";
+          let apiUrl = `/api/v1/movies/${id}`;
+        
+          fetch(apiUrl)
+            .then((response) => response.json())
+            .then((result) => {
+              console.log("Full response:", result);
+
+              const movies = result.data.movie || [];
+              const totalMovies = result.totalMovies; // Assuming API returns total number of movies
+              const totalPages = Math.ceil(totalMovies / moviesPerPage);
+
+              console.log("Movies data:", movies);
+              updateMoviesList(movies);
+            })
+            .catch((error) => console.error("Error fetching movies:", error));
+        }
+
+        function updateMoviesList(movies) {
+          const moviesList = document.getElementById("movies-list");
+          if (!moviesList) {
+            console.error("movies-list element not found");
+            return;
+          }
+
+          moviesList.innerHTML = ""; // Clear previous content
+
+            const movieDiv = document.createElement("div");
+            movieDiv.classList.add("movie");
+
+            // Add inline styles for a more appealing look
+            movieDiv.style.backgroundColor = "#ffffff";
+            movieDiv.style.padding = "20px";
+            movieDiv.style.marginBottom = "20px";
+            movieDiv.style.borderRadius = "10px";
+            movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            movieDiv.style.border = "1px solid #ddd";
+            movieDiv.style.transition = "transform 0.2s, box-shadow 0.2s";
+
+            // Add hover effect
+            movieDiv.addEventListener("mouseover", () => {
+              movieDiv.style.transform = "scale(1.02)";
+              movieDiv.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.2)";
+            });
+
+            movieDiv.addEventListener("mouseout", () => {
+              movieDiv.style.transform = "scale(1)";
+              movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+            });
+            console.log(movies._id);
+            movieDiv.innerHTML = `
+            
+                <img src="${movies.coverImage}" alt="${movies.name} Cover" style="width: 50%; margin-top: 10px; display: block; margin-left: auto; margin-right: auto;">
+                <h2 style="color: #333; margin-bottom: 10px;">${movies.name}</h2>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Description:</strong> ${movies.description}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Duration:</strong> ${movies.duration} minutes</p>
+                <p style="color: #007bff; font-weight: bold;">Rating: ${movies.rating}/10 (${movies.totalRating} votes)</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Release Year:</strong> ${movies.releaseYear}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Release Date:</strong> ${new Date(movies.releaseDate).toLocaleDateString()}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Genre:</strong> ${movies.genre.join(', ')}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Directors:</strong> ${movies.directors.join(', ')}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Actors:</strong> ${movies.actors.join(', ')}</p>
+                <p style="color: #666; margin-bottom: 8px;"><strong>Price:</strong> $${movies.price}</p>
+                `;
+
+            console.log("Appending movie:", movieDiv);
+            moviesList.appendChild(movieDiv);
+        }
+        fetchMovies(currentPage);
+    });
+
+
+
+        document.getElementById("home-button").addEventListener("click", () => {
+            window.location.href = "/home";
+        });
+        document.getElementById("songs-button").addEventListener("click", () => {
+            window.location.href = "/songs";
+        });
+        document.getElementById("movies-button").addEventListener("click", () => {
+            window.location.href = "/movies";
+        });
+    </script>
+</body>
+</html>

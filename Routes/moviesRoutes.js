@@ -10,7 +10,7 @@ router.route('/')
     .post(moviesController.createMovie)
 
 router.route('/:id')
-    .get(authController.protect,moviesController.getMovieById)
+    .get(moviesController.getMovieById)
     .patch(moviesController.updateMovie)
     .delete(authController.protect,authController.restrict("admin"),moviesController.deleteMovieById)
 

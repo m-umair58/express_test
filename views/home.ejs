@@ -1,52 +1,29 @@
-<!-- layout.ejs -->
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/styles/home-style.css">
-    <link rel="icon" type="image/png" href="images/logo.png" sizes="32x32" />
-  </head>   
-  <body>
-    <header>
-      <%- include('header') %>
-    </header>
-    <main>
-      <section id="media-categories">
-        <h2>Explore Our Collection</h2>
-        <div class="category-grid">
-          <div class="category-card">
-            <img src="/images/movie-image.png" alt="Movies" />
-            <h3>Movies</h3>
-            <p>Explore our extensive movie collection.</p>
-            <a href="/movies">Browse Movies</a>
-          </div>
-          <div class="category-card">
-            <img src="/images/music-image.png" alt="Songs" />
-            <h3>Songs</h3>
-            <p>Discover a world of music.</p>
-            <a href="/songs">Browse Songs</a>
-          </div>
-          <div class="category-card">
-            <img src="/images/tvShow-image.png" alt="TV Shows" />
-            <h3>TV Shows</h3>
-            <p>Catch up on popular TV shows.</p>
-            <a href="/tvshows">Browse TV Shows</a>
-          </div>
-          <div class="category-card">
-            <img src="/images/podcast-image.png" alt="Podcasts" />
-            <h3>Podcasts</h3>
-            <p>Listen to engaging podcasts.</p>
-            <a href="/podcasts">Browse Podcasts</a>
-          </div>
-        </div>
-      </section>
-    </main>
-    <script>
-      document.getElementById("movies-button").addEventListener("click", () => {
-        window.location.href = "/movies";
-      });
-      document.getElementById("songs-button").addEventListener("click", () => {
-        window.location.href = "/songs";
-      });
-    </script>
-  </body>
-</html>
+<section id="media-categories">
+  <h2>Explore Our Collection</h2>
+  <div class="category-grid">
+    <div class="category-card">
+      <img src="/images/movie-image.png" alt="Movies" />
+      <h3>Movies</h3>
+      <p>Explore our extensive movie collection.</p>
+      <a href="/movies">Browse Movies</a>
+    </div>
+    <div class="category-card">
+      <img src="/images/music-image.png" alt="Songs" />
+      <h3>Songs</h3>
+      <p>Discover a world of music.</p>
+      <a href="/songs">Browse Songs</a>
+    </div>
+    <div class="category-card">
+      <img src="/images/tvShow-image.png" alt="TV Shows" />
+      <h3>TV Shows</h3>
+      <p>Catch up on popular TV shows.</p>
+      <a href="/tvshows">Browse TV Shows</a>
+    </div>
+    <div class="category-card">
+      <img src="/images/podcast-image.png" alt="Podcasts" />
+      <h3>Podcasts</h3>
+      <p>Listen to engaging podcasts.</p>
+      <a href="/podcasts">Browse Podcasts</a>
+    </div>
+  </div>
+</section>

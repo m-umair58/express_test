@@ -22,7 +22,7 @@ const authRouter = require("./Routes/authRouter.js");
 const userRouter = require("./Routes/userRouter.js");
 
 let app = express();
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 const mongoose = require("mongoose");
 
@@ -42,28 +42,28 @@ mongoose
 // EJS setup
 
 app.use(cors());
-// app.use(expressLayout());
+app.use(expressLayout);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 // ejs materail
 
-app.get('/movies', (req, res) => {
-
-  res.render('movies');
+app.get("/movies", (req, res) => {
+  res.render("movies");
 });
-app.get('/signin', (req, res) => {
-
-  res.render('signin');
+app.get("/movies/:id", (req, res) => {
+  res.render("oneMovie", { id: req.params.id });
 });
-app.get(['/', '/home'], (req, res) => {
-
-  res.render('home',{ title: 'MoviesHub' ,body:'My body'});
+app.get("/signin", (req, res) => {
+  res.render("signin");
 });
-app.get('/songs', (req, res) => {
-
-  res.render('songs');
+app.get(["/", "/home"], (req, res) => {
+  res.render("home");
 });
+app.get("/songs", (req, res) => {
+  res.render("songs");
+});
+
 
 // Security
 app.use(helmet());

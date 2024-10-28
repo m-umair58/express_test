@@ -1,165 +1,149 @@
-<!-- views/home.ejs -->
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movies</title>
     <link rel="stylesheet" href="styles/movies-style.css">
+    <link rel="stylesheet" href="styles/footer.css">
     <link rel="icon" type="image/png" href="images/logo.png" sizes="32x32" /> 
     
-  </head>
-  <body>
-    <header>
-      <%- include('header') %>
-    </header>
-    <main>
-      <div id="search-container">
-        <input type="text" id="search-input" placeholder="Search movies..." />
-        <button id="search-button">Search</button>
-      </div>
-      <div id="movies-list"></div>
+</head>
+<main>
+  <div id="search-container">
+    <input type="text" id="search-input" placeholder="Search movies..." />
+    <button id="search-button">Search</button>
+  </div>
+  <div id="movies-list"></div>
 
-    </main>
-      
-  
-    <!-- Movie List -->
-    <footer>
-      <%- include('footer') %>
-    </footer>
+  <%- include('partials/paginationControls') %>
+</main>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        let currentPage = 1;
-        const moviesPerPage = 5;
-        let searchQuery = "";
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let currentPage = 1;
+    const moviesPerPage = 5;
+    let searchQuery = "";
 
-        function fetchMovies(page = 1, search = "") {
-          // Construct the API URL with pagination and search keyword
-          let apiUrl = `/api/v1/movies?page=${page}&limit=${moviesPerPage}`;
-          if (search) {
-            apiUrl += `&keyword=${encodeURIComponent(search)}`;
-          }
+    function fetchMovies(page = 1, search = "") {
+      // Construct the API URL with pagination and search keyword
+      let apiUrl = `/api/v1/movies?page=${page}&limit=${moviesPerPage}`;
+      if (search) {
+        apiUrl += `&keyword=${encodeURIComponent(search)}`;
+      }
 
-          fetch(apiUrl)
-            .then((response) => response.json())
-            .then((result) => {
-              console.log("Full response:", result);
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log("Full response:", result);
 
-              const movies = result.data.movies || [];
-              const totalMovies = result.totalMovies; // Assuming API returns total number of movies
-              const totalPages = Math.ceil(totalMovies / moviesPerPage);
+          const movies = result.data.movies || [];
+          const totalMovies = result.totalMovies; // Assuming API returns total number of movies
+          const totalPages = Math.ceil(totalMovies / moviesPerPage);
 
-              console.log("Movies data:", movies);
-              updateMoviesList(movies);
-              updatePaginationControls(totalPages);
-            })
-            .catch((error) => console.error("Error fetching movies:", error));
-        }
+          console.log("Movies data:", movies);
+          updateMoviesList(movies);
+          updatePaginationControls(totalPages);
+        })
+        .catch((error) => console.error("Error fetching movies:", error));
+    }
 
-        function updateMoviesList(movies) {
-          const moviesList = document.getElementById("movies-list");
-          if (!moviesList) {
-            console.error("movies-list element not found");
-            return;
-          }
+    function updateMoviesList(movies) {
+      const moviesList = document.getElementById("movies-list");
+      if (!moviesList) {
+        console.error("movies-list element not found");
+        return;
+      }
 
-          moviesList.innerHTML = ""; // Clear previous content
+      moviesList.innerHTML = ""; // Clear previous content
 
-          movies.forEach((movie) => {
-            const movieDiv = document.createElement("div");
-            movieDiv.classList.add("movie");
+      movies.forEach((movie) => {
+        const movieDiv = document.createElement("div");
+        movieDiv.classList.add("movie");
 
-            // Add inline styles for a more appealing look
-            movieDiv.style.backgroundColor = "#ffffff";
-            movieDiv.style.padding = "20px";
-            movieDiv.style.marginBottom = "20px";
-            movieDiv.style.borderRadius = "10px";
-            movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
-            movieDiv.style.border = "1px solid #ddd";
-            movieDiv.style.transition = "transform 0.2s, box-shadow 0.2s";
+        // Add inline styles for a more appealing look
+        movieDiv.style.backgroundColor = "#ffffff";
+        movieDiv.style.padding = "20px";
+        movieDiv.style.marginBottom = "20px";
+        movieDiv.style.borderRadius = "10px";
+        movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+        movieDiv.style.border = "1px solid #ddd";
+        movieDiv.style.transition = "transform 0.2s, box-shadow 0.2s";
 
-            // Add hover effect
-            movieDiv.addEventListener("mouseover", () => {
-              movieDiv.style.transform = "scale(1.02)";
-              movieDiv.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.2)";
-            });
+        // Add hover effect
+        movieDiv.addEventListener("mouseover", () => {
+          movieDiv.style.transform = "scale(1.02)";
+          movieDiv.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.2)";
+        });
 
-            movieDiv.addEventListener("mouseout", () => {
-              movieDiv.style.transform = "scale(1)";
-              movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
-            });
-
-            movieDiv.innerHTML = `
+        movieDiv.addEventListener("mouseout", () => {
+          movieDiv.style.transform = "scale(1)";
+          movieDiv.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
+        });
+        console.log(movie._id);
+        movieDiv.innerHTML = `
+            <a style="text-decoration: none;" href="/movies/${movie._id}">
               <h2 style="color: #333; margin-bottom: 10px;">${movie.name}</h2>
               <p style="color: #666; margin-bottom: 8px;">${movie.description}</p>
               <p style="color: #666; margin-bottom: 8px;">Actors: ${movie.actors}</p>
               <p style="color: #666; margin-bottom: 8px;">Directors: ${movie.directors}</p>
               <p style="color: #007bff; font-weight: bold;">Rating: ${movie.rating}/10 (${movie.totalRating})</p>
+            </a>
             `;
 
-            console.log("Appending movie:", movieDiv);
-            moviesList.appendChild(movieDiv);
-          });
-        }
+        console.log("Appending movie:", movieDiv);
+        moviesList.appendChild(movieDiv);
+      });
+    }
 
-        function updatePaginationControls(totalPages) {
-          const prevButton = document.getElementById("prev-page");
-          const nextButton = document.getElementById("next-page");
-          const currentPageSpan = document.getElementById("current-page");
+    function updatePaginationControls(totalPages) {
+      const prevButton = document.getElementById("prev-page");
+      const nextButton = document.getElementById("next-page");
+      const currentPageSpan = document.getElementById("current-page");
 
-          currentPageSpan.textContent = `Page ${currentPage}`;
+      currentPageSpan.textContent = `Page ${currentPage}`;
 
-          prevButton.disabled = currentPage === 1;
-          nextButton.disabled = currentPage === totalPages;
-        }
+      prevButton.disabled = currentPage === 1;
+      nextButton.disabled = currentPage === totalPages;
+    }
 
-        // Search function: Trigger fetchMovies with search query
-        document
-          .getElementById("search-button")
-          .addEventListener("click", () => {
-            const searchInput = document.getElementById("search-input").value;
-            searchQuery = searchInput;
-            currentPage = 1; // Reset to the first page when a new search is made
-            fetchMovies(currentPage, searchQuery);
-          });
+    // Search function: Trigger fetchMovies with search query
+    document.getElementById("search-button").addEventListener("click", () => {
+      const searchInput = document.getElementById("search-input").value;
+      searchQuery = searchInput;
+      currentPage = 1; // Reset to the first page when a new search is made
+      fetchMovies(currentPage, searchQuery);
+    });
 
-        document
-          .getElementById("search-input")
-          .addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              searchQuery = event.target.value;
-              currentPage = 1; // Reset to the first page when a new search is made
-              fetchMovies(currentPage, searchQuery);
-            }
-          });
-
-        // Pagination event listeners
-        document.getElementById("prev-page").addEventListener("click", () => {
-          if (currentPage > 1) {
-            currentPage--;
-            fetchMovies(currentPage, searchQuery);
-          }
-        });
-
-        document.getElementById("next-page").addEventListener("click", () => {
-          currentPage++;
+    document
+      .getElementById("search-input")
+      .addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          searchQuery = event.target.value;
+          currentPage = 1; // Reset to the first page when a new search is made
           fetchMovies(currentPage, searchQuery);
-        });
-
-        
-
-        // Initial fetch for the first page
-        fetchMovies(currentPage);
+        }
       });
 
-      document.getElementById("home-button").addEventListener("click", () => {
-          window.location.href = "/home";
-        });
-      document.getElementById("songs-button").addEventListener("click", () => {
-          window.location.href = "/songs";
-        });
-      
-    </script>
-  </body>
-</html>
+    // Pagination event listeners
+    document.getElementById("prev-page").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        fetchMovies(currentPage, searchQuery);
+      }
+    });
+
+    document.getElementById("next-page").addEventListener("click", () => {
+      currentPage++;
+      fetchMovies(currentPage, searchQuery);
+    });
+
+    // Initial fetch for the first page
+    fetchMovies(currentPage);
+  });
+
+  document.getElementById("home-button").addEventListener("click", () => {
+    window.location.href = "/home";
+  });
+  document.getElementById("songs-button").addEventListener("click", () => {
+    window.location.href = "/songs";
+  });
+</script>

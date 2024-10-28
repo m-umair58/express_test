@@ -21,7 +21,7 @@ header p {
 }
 #search-container {
   position: absolute;
-  top: 61px;
+  top: 54px;
   right: 70px;
   background-color: #ffffff; /* Add background color */
   border-radius: 8px; /* Add rounded corners */
@@ -71,7 +71,6 @@ header p {
 }
 
 #pagination-controls {
-  position: fixed;
   bottom: 20px;
   width: 100%;
   /* left: 50%; */
@@ -80,6 +79,7 @@ header p {
   justify-content: center;
   align-items: center;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 #pagination-controls button {

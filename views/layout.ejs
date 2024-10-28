@@ -1,0 +1,22 @@
+<!-- layout.ejs -->
+<html>
+  <head>
+    <title>MoviesHub</title>
+    <link rel="stylesheet" href="/styles/home-style.css" />
+    <link rel="stylesheet" href="/styles/footer.css" />
+    <link rel="icon" type="image/png" href="images/logo.png" sizes="32x32" />
+  </head>
+  <body>
+    <header><%- include('partials/header') %></header>
+    <main><%- body %></main>
+    <footer><%- include('partials/footer') %></footer>
+    <script>
+      document.getElementById("movies-button").addEventListener("click", () => {
+        window.location.href = "/movies";
+      });
+      document.getElementById("songs-button").addEventListener("click", () => {
+        window.location.href = "/songs";
+      });
+    </script>
+  </body>
+</html>
