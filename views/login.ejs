@@ -1,37 +1,275 @@
-<%- include("./includes/head.ejs")%>
-<link rel="stylesheet" href="/styles/forms.css">
-<link rel="stylesheet" href="/styles/auth.css">
-</head>
-
-<body>
-    <%- include("./includes/navigation.ejs")%>
-    <main>
-        <% if (errorMessage.length > 0) { %>
-        <div class="user-message user-message--error"><i class="fas fa-exclamation-circle"></i> <%= errorMessage %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movies Hub</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f0f8ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .form-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+      .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .subtitle {
+        font-size: 1.8rem;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        color: #000;
+      }
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 1rem;
+      }
+      .flex-between {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .form-checkbox {
+        margin-right: 0.5rem;
+      }
+      .remember-label {
+        font-size: 0.875rem;
+      }
+      .form-link {
+        color: #3182ce;
+        text-decoration: none;
+        font-size: 0.875rem;
+      }
+      .form-button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+      }
+      .form-button:active {
+        transform: scale(0.98);
+      }
+      .form-button:hover {
+        background-color: #2c5282;
+      }
+      .password-container {
+        position: relative;
+      }
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .password-toggle img {
+        width: 20px;
+        height: 20px;
+      }
+      .error-message {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+      }
+      .form-button:disabled {
+        background-color: #90cdf4;
+        cursor: not-allowed;
+      }
+      .signup-text {
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <div class="icon">
+        <img src="images/logo.png" alt="logo" />
+      </div>
+      <h3 class="subtitle">Sign In</h3>
+      <form id="signInForm" aria-labelledby="Sign In">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input
+            class="form-input"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="email@domain.com"
+            aria-required="true"
+            required
+          />
+          <div id="emailError" class="error-message">
+            Please enter a valid email address
+          </div>
         </div>
-        <% } %>
-        <form class="login-form" action="/login" method="POST" autocomplete="off">
-            <h1 class="form__title">LOG IN</h1>
-            <div class="form-control">
-                <label for="email">Email</label>
-                <input value="<%= oldInput.email %>"
-                    class="<%= validationErrors.find(e=>e.param==="email") ? "invalid" : "" %>" type="email"
-                    name="email" id="email">
-
-            </div>
-            <div class="form-control">
-                <label for="password">Password</label>
-                <input value="<%= oldInput.password %>"
-                    class="<%= validationErrors.find(e=>e.param==="password") ? "invalid" : "" %>" type="password"
-                    name="password" id="password">
-            </div>
-
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button class="btn" type="submit">Login</button>
-        </form>
-        <div class="centered">
-            <a href="/reset">Reset Password</a>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="password-container">
+            <input
+              class="form-input"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="**********"
+              aria-required="true"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              aria-label="Toggle password visibility"
+            >
+              <img
+                src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/eye.svg"
+                alt="Show password"
+              />
+            </button>
+          </div>
+          <div id="passwordError" class="error-message">
+            Password must be at least 8 characters
+          </div>
         </div>
-    </main>
-    <%- include("./includes/end.ejs")%>
-</body>
+        <div class="form-group flex-between">
+          <div>
+            <input
+              class="form-checkbox"
+              type="checkbox"
+              id="remember"
+              name="remember"
+            />
+            <label for="remember" class="remember-label">Remember me</label>
+          </div>
+          <a href="/api/v1/users/forgotPassword" class="form-link"
+            >Forgot password?</a
+          >
+        </div>
+        <button type="submit" class="form-button" id="submitButton">
+          Sign In
+        </button>
+        <p class="signup-text">
+          Don't have an account? <a href="/signup" class="form-link">Sign Up</a>
+        </p>
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("signInForm");
+      const passwordToggle = document.querySelector(".password-toggle");
+      const passwordInput = document.getElementById("password");
+      const submitButton = document.getElementById("submitButton");
+      const emailInput = document.getElementById("email");
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+
+      // Password toggle functionality
+      passwordToggle.addEventListener("click", function () {
+        const type =
+          passwordInput.getAttribute("type") === "password"
+            ? "text"
+            : "password";
+        passwordInput.setAttribute("type", type);
+        passwordToggle.querySelector("img").src =
+          type === "password"
+            ? "https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/eye.svg"
+            : "https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/eye-off.svg";
+        passwordToggle.setAttribute(
+          "aria-label",
+          type === "password" ? "Show password" : "Hide password"
+        );
+      });
+
+      // Real-time email and password validation
+      emailInput.addEventListener("input", function () {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(this.value)) {
+          emailError.style.display = "block";
+        } else {
+          emailError.style.display = "none";
+        }
+      });
+
+      passwordInput.addEventListener("input", function () {
+        if (this.value.length < 8) {
+          passwordError.style.display = "block";
+        } else {
+          passwordError.style.display = "none";
+        }
+      });
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Clear previous errors
+        emailError.style.display = "none";
+        passwordError.style.display = "none";
+
+        const formData = {
+          email: emailInput.value,
+          password: passwordInput.value,
+        };
+
+        try {
+          const response = await fetch("/api/v1/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+
+          const result = await response.json();
+
+          if (result.status === "success") {
+            // Simply redirect to movies page
+            window.location.href = "/movies";
+          } else {
+            throw new Error(result.message || "Login failed");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          passwordError.textContent = "Login failed. Please check your credentials and try again.";
+          passwordError.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

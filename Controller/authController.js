@@ -7,7 +7,7 @@ const sendEmail = require('./../Utils/email');
 const { log } = require('console');
 const crypto = require('crypto');
 
-const signToken = id =>{
+const signToken = (id) =>{
     return jwt.sign({id},process.env.SECRERT_STR,{
         expiresIn: process.env.LOGIN_EXPIRES
     })
@@ -28,7 +28,7 @@ const createSendResponse = (user,statusCode,res)=>{
         res.cookie('jwt',token,options);
 
         user.password = undefined // this is not going to change password in db as undefined but just not to show in response
-
+        
         res.status(200).json({
             status:"success",
             token,
@@ -45,24 +45,55 @@ exports.signup = asyncErrorHandler(async(req,res,next)=>{
 });
 
 exports.login = asyncErrorHandler(async(req,res,next)=>{
-    const email = req.body.email;
-    const password = req.body.password;
+    try {
+        // Log the incoming request
+        console.log('Login request body:', req.body);
 
-    // const {email,password} = req.body; // (object destructuring syntax) to do the same this as above
-    
-    if(!email || !password){
-        const error = new CustomError("Please provide Email and password to login...!",400);
-        return next(error);
-    }
-    const user = await User.findOne({email}).select('+password'); // .select('+password') wrote this line because we explicitly set select false in user model
+        const {email, password} = req.body;
+        
+        if(!email || !password){
+            console.log('Missing email or password');
+            return res.status(400).json({
+                status: "fail",
+                message: "Please provide Email and password to login...!"
+            });
+        }
 
-    const isMatch = await user.comparePassword(password,user.password);
-    if(!user||!isMatch){
-        const error = new CustomError("Invalid email or password...!",400)
-        return next(error);
+        const user = await User.findOne({email}).select('+password');
+
+        if(!user){
+            console.log('User not found');
+            return res.status(401).json({
+                status: "fail",
+                message: "Invalid email or password...!"
+            });
+        }
+
+        const isMatch = await user.comparePassword(password, user.password);
+        if(!isMatch){
+            console.log('Password mismatch');
+            return res.status(401).json({
+                status: "fail",
+                message: "Invalid email or password...!"
+            });
+        }
+        
+        req.session.user = {
+            id: user._id,
+            email: user.email
+          };
+        
+        console.log('Login successful');
+        return createSendResponse(user, 200, res);
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({
+            status: "error",
+            message: "An error occurred during login",
+            error: error.message
+        });
     }
-    
-    createSendResponse(user,200,res);
 });
 
 exports.protect = asyncErrorHandler(async(req,res,next)=>{

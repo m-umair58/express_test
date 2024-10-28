@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle || 'Default Title' %></title>
+</head>
+<body>
 <div class="backdrop"></div>
 <div class="navigation">
     <header class="main-header">
@@ -6,10 +14,11 @@
         <a href="/" class="logo">SHOPMIP</a>
         <nav class="main-header__nav">
             <ul class="main-header__item-list middle">
-                <!-- <li class="main-header__item"><a class="<%= path==='/' ? 'active' : '' %>" href="/">Shop</a></li>
-            <li class="main-header__item"><a class="<%= path==='/products' ? 'active' : '' %>"
-                    href="/products">Products</a></li> -->
-                <% if(isAuthenticated) { %>
+                <!-- Using optional chaining or default values -->
+                <li class="main-header__item">
+                    <a class="<%= locals.path === '/' ? 'active' : '' %>" href="/">Home</a>
+                </li>
+                <% if(locals.isAuthenticated) { %>
                 <li class="main-header__item"><a class="<%= path==='/cart' ? 'active' : '' %>" href="/cart">Cart</a>
                 </li>
                 <li class="main-header__item"><a class="<%= path==='/orders' ? 'active' : '' %>"
@@ -25,7 +34,7 @@
             </ul>
 
             <ul class="main-header__item-list">
-                <% if(!isAuthenticated) { %>
+                <% if(!locals.isAuthenticated) { %>
                 <li class="main-header__item">
                     <a class="<%= path==='/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
@@ -51,7 +60,7 @@
             <a class="<%= path === '/' ? 'active' : '' %>" href="/">Shop</a>
         </li>
 
-        <% if (isAuthenticated) { %>
+        <% if (locals.isAuthenticated) { %>
         <li class="mobile-nav__item">
             <a class="<%= path === '/cart' ? 'active' : '' %>" href="/cart">Cart</a>
         </li>
@@ -67,7 +76,7 @@
             </a>
         </li>
         <% } %>
-        <% if (!isAuthenticated) { %>
+        <% if (!locals.isAuthenticated) { %>
         <li class="mobile-nav__item">
             <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
         </li>
@@ -84,3 +93,6 @@
         <% } %>
     </ul>
 </nav>
+
+</body>
+</html>

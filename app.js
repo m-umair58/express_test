@@ -1,5 +1,7 @@
 require("./instrument.js");
 const Sentry = require("@sentry/node");
+const jwt = require('jsonwebtoken');
+const session = require('express-session');
 
 //ejs related
 const cors = require("cors");
@@ -21,9 +23,27 @@ const songsRouter = require("./Routes/songsRouter.js");
 const authRouter = require("./Routes/authRouter.js");
 const userRouter = require("./Routes/userRouter.js");
 
-let app = express();
-app.use(express.static("public"));
+const asyncErrorHandler = require('./Utils/asyncErrorHandler');
+const User = require('./Models/userModel');
+const { signToken, login } = require('./Controller/authController');
 
+let app = express();
+
+// Add cookie-parser and body parsing middleware EARLY in the middleware chain
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 const mongoose = require("mongoose");
 
 const dotenv = require("dotenv");
@@ -48,19 +68,44 @@ app.set("view engine", "ejs");
 
 // ejs materail
 
-app.get("/movies", (req, res) => {
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  res.redirect('/auth/login');
+};
+
+// Protected routes
+app.get('/movies', isAuthenticated, (req, res) => {
+  
   res.render("movies");
 });
-app.get("/movies/:id", (req, res) => {
+
+// Login route handler
+app.get('/auth/login', (req, res) => {
+  const redirect = req.query.redirect || '/';
+  res.render('login', {
+    redirect,
+    path: '/auth/login',
+    pageTitle: 'Login',
+    isAuthenticated: isAuthenticated, // or req.isAuthenticated() if you have that middleware
+    errorMessage: null,
+    layout: false
+  });
+});
+
+app.get("/movies/:id", isAuthenticated,(req, res) => {
   res.render("oneMovie", { id: req.params.id });
 });
-app.get("/signin", (req, res) => {
-  res.render("signin");
+app.get("/signup", (req, res) => {
+  res.render("signup",{
+    layout: false
+  });
 });
 app.get(["/", "/home"], (req, res) => {
   res.render("home");
 });
-app.get("/songs", (req, res) => {
+app.get("/songs",isAuthenticated, (req, res) => {
   res.render("songs");
 });
 
@@ -99,5 +144,7 @@ app.use("/api/v1/user", userRouter);
 Sentry.setupExpressErrorHandler(app);
 // global error handling middleware
 app.use(globalErrorHandler);
+
+
 
 module.exports = app;

@@ -62,8 +62,13 @@ userSchema.pre(/^find/,function(next){
     next();
 })
 
-userSchema.methods.comparePassword = async function(pass, passDb) {
-  return await bcrypt.compare(pass, passDb);
+userSchema.methods.comparePassword = async function(candidatePassword, userPassword) {
+    try {
+        return await bcrypt.compare(candidatePassword, userPassword);
+    } catch (error) {
+        console.error('Password comparison error:', error);
+        return false;
+    }
 };
 
 userSchema.methods.isPasswordChanged = async function(JWTTimestamp){
